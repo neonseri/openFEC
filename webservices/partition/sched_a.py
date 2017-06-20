@@ -58,29 +58,29 @@ class SchedAGroup(TableGroup):
 
     @classmethod
     def index_factory(cls, child):
-        c = child.c
-        return [
-            sa.Index(None, c.rpt_yr),
-            sa.Index(None, c.pg_date),
-            sa.Index(None, c.entity_tp),
-            sa.Index(None, c.image_num),
-            sa.Index(None, c.contbr_st),
-            sa.Index(None, c.contbr_city),
-            sa.Index(None, c.is_individual),
-            sa.Index(None, c.clean_contbr_id),
-            sa.Index(None, c.two_year_transaction_period),
-
-            sa.Index('ix_{0}_sub_id_amount_tmp'.format(child.name[:-4]), c.contb_receipt_amt, child.c[cls.primary]),
-            sa.Index('ix_{0}_sub_id_date_tmp'.format(child.name[:-4]), c.contb_receipt_dt, child.c[cls.primary]),
-
-            sa.Index('ix_{0}_cmte_id_tmp'.format(child.name[:-4]), c.cmte_id, c[cls.primary]),
-            sa.Index('ix_{0}_cmte_id_amount_tmp'.format(child.name[:-4]), c.cmte_id, c.contb_receipt_amt, c[cls.primary]),
-            sa.Index('ix_{0}_cmte_id_date_tmp'.format(child.name[:-4]), c.cmte_id, c.contb_receipt_dt, c[cls.primary]),
-
-            sa.Index(None, c.contributor_name_text, postgresql_using='gin'),
-            sa.Index(None, c.contributor_employer_text, postgresql_using='gin'),
-            sa.Index(None, c.contributor_occupation_text, postgresql_using='gin'),
-        ]
+        return []
+#        return [
+#            sa.Index(None, 'rpt_yr'),
+#            sa.Index(None, 'pg_date'),
+#            sa.Index(None, 'entity_tp'),
+#            sa.Index(None, 'image_num'),
+#            sa.Index(None, 'contbr_st'),
+#            sa.Index(None, 'contbr_city'),
+#            sa.Index(None, 'is_individual'),
+#            sa.Index(None, 'clean_contbr_id'),
+#            sa.Index(None, 'two_year_transaction_period'),
+#
+#            sa.Index('ix_{0}_sub_id_amount_tmp'.format(child.name[:-4]), 'contb_receipt_amt', 'sub_id'),
+#            sa.Index('ix_{0}_sub_id_date_tmp'.format(child.name[:-4]), 'contb_receipt_dt', 'sub_id'),
+#
+#            sa.Index('ix_{0}_cmte_id_tmp'.format(child.name[:-4]), 'cmte_id', 'sub_id'),
+#            sa.Index('ix_{0}_cmte_id_amount_tmp'.format(child.name[:-4]), 'cmte_id', 'contb_receipt_amt', 'sub_id'),
+#            sa.Index('ix_{0}_cmte_id_date_tmp'.format(child.name[:-4]), 'cmte_id', 'contb_receipt_dt', 'sub_id'),
+#
+#            sa.Index(None, 'contributor_name_text', postgresql_using='gin'),
+#            sa.Index(None, 'contributor_employer_text', postgresql_using='gin'),
+#            sa.Index(None, 'contributor_occupation_text', postgresql_using='gin'),
+#        ]
 
     @classmethod
     def update_child(cls, child):
