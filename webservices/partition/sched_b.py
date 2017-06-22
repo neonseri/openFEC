@@ -1,7 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import TSVECTOR
 
-from webservices.rest import db
 from webservices.partition.base import TableGroup
 
 class SchedBGroup(TableGroup):
@@ -50,39 +49,3 @@ class SchedBGroup(TableGroup):
                 parent.c.rpt_yr
             ).label('two_year_transaction_period'),
         ]
-
-    @classmethod
-    def index_factory(cls, child):
-        return []
-#        return [
-#            sa.Index(None, c.rpt_yr),
-#            sa.Index(None, c.pg_date),
-#            sa.Index(None, c.image_num),
-#            sa.Index(None, c.recipient_st),
-#            sa.Index(None, c.recipient_city),
-#            sa.Index(None, c.clean_recipient_cmte_id),
-#            sa.Index(None, c.two_year_transaction_period),
-#
-#            sa.Index('ix_{0}_sub_id_date_tmp'.format(child.name[:-4]), c.disb_dt, c[cls.primary]),
-#            sa.Index('ix_{0}_sub_id_amount_tmp'.format(child.name[:-4]), c.disb_amt, c[cls.primary]),
-#
-#            sa.Index('ix_{0}_cmte_id_tmp'.format(child.name[:-4]), c.cmte_id, c[cls.primary]),
-#            sa.Index('ix_{0}_cmte_id_date_tmp'.format(child.name[:-4]), c.cmte_id, c.disb_dt, c[cls.primary]),
-#            sa.Index('ix_{0}_cmte_id_amount_tmp'.format(child.name[:-4]), c.cmte_id, c.disb_amt, c[cls.primary]),
-#
-#            sa.Index(None, c.recipient_name_text, postgresql_using='gin'),
-#            sa.Index(None, c.disbursement_description_text, postgresql_using='gin'),
-#        ]
-
-    @classmethod
-    def update_child(cls, child):
-        cmd = 'alter table {0} alter column recipient_st set statistics 1000'.format(child.name)
-        db.engine.execute(cmd)
-
-    @classmethod
-    def create_trigger(cls):
-        db.engine.execute('DROP TRIGGER IF EXISTS insert_sched_b_trigger ON ofec_sched_b_master')
-        db.engine.execute('''
-            CREATE trigger insert_sched_b_trigger BEFORE INSERT ON ofec_sched_b_master
-                FOR EACH ROW EXECUTE PROCEDURE insert_sched_master('ofec_sched_b_');
-            ''')

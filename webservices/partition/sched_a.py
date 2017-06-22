@@ -1,7 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import TSVECTOR
 
-from webservices.rest import db
 from webservices.partition.base import TableGroup
 
 class SchedAGroup(TableGroup):
@@ -55,41 +54,3 @@ class SchedAGroup(TableGroup):
                 parent.c.rpt_yr
             ).label('two_year_transaction_period'),
         ]
-
-    @classmethod
-    def index_factory(cls, child):
-        return []
-#        return [
-#            sa.Index(None, 'rpt_yr'),
-#            sa.Index(None, 'pg_date'),
-#            sa.Index(None, 'entity_tp'),
-#            sa.Index(None, 'image_num'),
-#            sa.Index(None, 'contbr_st'),
-#            sa.Index(None, 'contbr_city'),
-#            sa.Index(None, 'is_individual'),
-#            sa.Index(None, 'clean_contbr_id'),
-#            sa.Index(None, 'two_year_transaction_period'),
-#
-#            sa.Index('ix_{0}_sub_id_amount_tmp'.format(child.name[:-4]), 'contb_receipt_amt', 'sub_id'),
-#            sa.Index('ix_{0}_sub_id_date_tmp'.format(child.name[:-4]), 'contb_receipt_dt', 'sub_id'),
-#
-#            sa.Index('ix_{0}_cmte_id_tmp'.format(child.name[:-4]), 'cmte_id', 'sub_id'),
-#            sa.Index('ix_{0}_cmte_id_amount_tmp'.format(child.name[:-4]), 'cmte_id', 'contb_receipt_amt', 'sub_id'),
-#            sa.Index('ix_{0}_cmte_id_date_tmp'.format(child.name[:-4]), 'cmte_id', 'contb_receipt_dt', 'sub_id'),
-#
-#            sa.Index(None, 'contributor_name_text', postgresql_using='gin'),
-#            sa.Index(None, 'contributor_employer_text', postgresql_using='gin'),
-#            sa.Index(None, 'contributor_occupation_text', postgresql_using='gin'),
-#        ]
-
-    @classmethod
-    def update_child(cls, child):
-        cmd = 'alter table {0} alter column contbr_st set statistics 1000'.format(child.name)
-        db.engine.execute(cmd)
-
-    @classmethod
-    def create_trigger(cls):
-        db.engine.execute('DROP TRIGGER IF EXISTS insert_sched_a_trigger ON ofec_sched_a_master')
-        db.engine.execute('''
-            CREATE trigger insert_sched_a_trigger BEFORE INSERT ON ofec_sched_a_master FOR EACH ROW EXECUTE PROCEDURE insert_sched_master('ofec_sched_a_');
-            ''')
