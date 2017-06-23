@@ -49,8 +49,4 @@ class SchedAGroup(TableGroup):
                 parent.c.contbr_id,
                 parent.c.cmte_id,
             ).label('clean_contbr_id'),
-            sa.func.get_transaction_year(
-                parent.c[cls.transaction_date_column],
-                parent.c.rpt_yr
-            ).label('two_year_transaction_period'),
         ]
